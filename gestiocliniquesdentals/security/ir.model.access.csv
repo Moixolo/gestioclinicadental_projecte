@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_gestiocliniquesdentals_historia_medica,gestiocliniquesdentals.historia_medica,model_gestiocliniquesdentals_historia_medica,base.group_user,1,1,1,1
+access_gestiocliniquesdentals_entrada,gestiocliniquesdentals.entrada,model_gestiocliniquesdentals_entrada,base.group_user,1,1,1,1
+access_gestiocliniquesdentals_anamnesis,gestiocliniquesdentals.anamnesis,model_gestiocliniquesdentals_anamnesis,base.group_user,1,1,1,1
+
+access_gestiocliniquesdentals_agenda,gestiocliniquesdentals.agenda,model_gestiocliniquesdentals_agenda,base.group_user,1,1,1,1
+access_gestiocliniquesdentals_cita,gestiocliniquesdentals.cita,model_gestiocliniquesdentals_cita,base.group_user,1,1,1,1
+
