@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+
+          <record id="gestiocliniquesdentals.grup_sanitaris" model="res.groups">
+            <field name="name">sanitaris</field>
+            <field name="category_id" ref="base.module_category_administration" />
+          </record>
+
+          <record id="gestiocliniquesdentals.grup_administra" model="res.groups">
+            <field name="name">administra</field>
+            <field name="category_id" ref="base.module_category_administration" />
+          </record>
+
+    </data>
+</odoo>

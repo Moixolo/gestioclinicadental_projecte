@@ -22,14 +22,27 @@
       </field>
     </record>
 
+    <!-- search -->
+    <record model="ir.ui.view" id="gestiocliniquesdentals.pacient_search">
+      <field name="name">pacient</field>
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <search>    
+          <filter name="tipo_usuari" domain="[('is_pacient','=',True)]"/>
+          <filter name="tipo_sanitari" domain="[('is_sanitari','=',True)]"/>
+        </search>
+      </field>
+    </record>
+
+
+
     <!-- form -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.pacient_form">
       <field name="name">pacient</field>
       <field name="model">res.partner</field>
       <field name="arch" type="xml">
       <form>
-      <sheet>
-        
+      <sheet>        
           <field name="photo" widget="image" class="oe_avatar" style="float:left;" />
           <group string='Dades personals'>
             <group>
@@ -37,33 +50,54 @@
               <field name="surname1" string='Primer cognom'/>
               <field name="surname2" string='Segón cognom'/> 
               <field name="dateborn" string='Data de naixement'/>
-              <field name="years" string='Edat'/>
-
-              <field name='val' string='DNI/NIE'/>
-              
+              <field name="years" string='Edat'/>           
+              <field name='val' string='DNI/NIE'/>   
+              <field name="country_id"/>
+              <field name="state_id"/>
             </group>
             <group>
               <field name="phone"/>
               <field name="mobile"/> 
               <field name="email"/> 
-
               <field name="street"/>
               <field name="city"/>
               <field name="zip"/> 
+              <field name="is_pacient"/>
             </group>
           </group>
           <notebook>
-            <page name="name" string="Historia mèdica">
-              <field name="pacient_historia" string="Med. history">
+            <page name="name" string="Cites">
+              <field name="pacient_agenda">
                 <tree>
-                  <field name="id_historia"/>
-                  <field name="data_alta"/>         
+                  <field name="publish_date"/>
                 </tree>
-              </field>  
-
+              </field>
             </page>
+            <page name="name" string="Presupostos">             
+                <field name="presu_pacient" string=" Presupost" context="{'form_view_ref':'gestiocliniquesdentals.presupost_form', 'default_partner_id':active_id}">
+                  <tree> 
+                    <field name="state" invisible="1"/>                                               
+                    <field name="name" string="Número presupost"/> 
+                    <field name="amount_total"/>
+                    <field name="date_order"/>
+                  </tree>
+                </field> 
+            </page>
+            <page name="name" string="Historia clínica">
+              <group>
+              <field name="pacient_historia"/>              
+              </group>
+            <button name="nova_hc" type="object" string="Nova historia" class="oe_highlight" attrs="{'invisible':[('pacient_historia', '!=', False)]}"/>
+            </page>
+            <page name="name" string="Anamnèsis">
+              <field name="pacient_anamnesis">
+                  <tree>
+                    <field name="data_alta_anam" string="Data de alta"/>
+                    <field name="notes" string="Anotacions"/>
+                  </tree>
+              </field>
+            </page>           
           </notebook>
-        
       </sheet>
       </form>
       </field>
@@ -105,9 +139,13 @@
               <field name="street"/>
               <field name="city"/>
               <field name="zip"/> 
+
+
           </group>
 
-          <group string='Dades profesionals'>           
+          <group string='Dades profesionals'> 
+              <field name="is_sanitari"/> 
+              <field name="is_administratiu"/>           
               <field name="num_colegiat"/>
               <field name="categoria"/>
               <field name="especialitat"/>             
@@ -117,8 +155,6 @@
       </form>
       </field>
     </record>
-
-    
 
 
     <!--doctor  -->
@@ -318,11 +354,13 @@
       <field name="arch" type="xml">
         <tree>
         <field name="id_historia"/>
+        <field name="historia_pacient"/>
         <field name="data_alta"/>
         <field name="descripcio"/>
         </tree>
       </field>
     </record>
+    
     <!-- form -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.historia_medica_form">
       <field name="name">Historia</field>
@@ -331,18 +369,18 @@
         <form>
           <sheet>
             <group>
-              <field name="id_historia" string="Identificador historia"/>
+              <field name="historia_pacient" string="Pacient" context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}"/>
               <field name="data_alta" string="Data alta"/>
               <field name="descripcio" string="Descripció"/>
             </group>
             <group>
-              <field name="historia_entrada" string="Entrades">
-                <tree>
-                  <field name="data_entrada" string="Data"/>  
-                  <field name="descripcio_curta" string="Indice"/>
-                  <field name="descripcio_llarga" string="Descripció"/>
-                </tree>
-              </field>
+            <field name="historia_entrada" string="Entrades">
+              <tree>
+                <field name="data_entrada" string="Data"/>  
+                <field name="descripcio_curta" string="Intervenció"/>
+                <field name="descripcio_llarga" string="Observacions"/>
+              </tree>
+            </field>
             </group>
           </sheet>
         </form>
@@ -356,7 +394,6 @@
       <field name="model">gestiocliniquesdentals.entrada</field>
       <field name="arch" type="xml">
         <tree>          
-          <field name="id_entrada"/>
           <field name="id_usuari"/>
           <field name="data_entrada"/>
           <field name="descripcio_curta"/>
@@ -372,11 +409,9 @@
       <form>   
         <sheet> 
           <group>               
-            <field name="id_entrada" string="Identificador"/>
-            <field name="id_usuari" string="Usuari"/>
             <field name="data_entrada" string="Data entrada"/>
-            <field name="descripcio_curta" string="Assumbte"/>
-            <field name="descripcio_llarga" string="Descripció llarga"/>           
+            <field name="descripcio_curta" string="Intervenció"/>
+            <field name="descripcio_llarga" string="Observacions"/>           
           </group>
         </sheet> 
       </form>
@@ -389,20 +424,13 @@
       <field name="name">Anamnesis</field>
       <field name="model">gestiocliniquesdentals.anamnesis</field>
       <field name="arch" type="xml">
-        <tree>
-          <field name="id_anamnesis"/>          
+        <tree>                
           <field name="data_alta_anam"/>
-          <field name="latex"/>
-          <field name="paracetamol"/>
-          <field name="ibuprofeno"/>
-          <field name="altres_alergies"/>
-          <field name="covid"/>
-          <field name="hepatits"/>
-          <field name="vih"/>
-          <field name="altres_malalties"/>
+          
         </tree>
       </field>
     </record>
+    
     <!-- form -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.anamnesis_form">
       <field name="name">Anamnesis</field>
@@ -411,11 +439,11 @@
         <form>
           <sheet>
             <group string='Datos historia' style='weight:50%;'>
-              <field name="id_anamnesis" string='Identificador de anamnesis'/>          
+              <field name="anamnesis_pacient" string='Pacient' context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}"/> 
               <field name="data_alta_anam" string='Data anamnesis'/>  
             </group> 
             <group string='Informació mèdica' 
-              style='background-color: #d1d1d1;border-radius:20px;'>            
+              style='border-radius:20px;'>            
               <field name="latex"/>
               <field name="paracetamol"/>
               <field name="ibuprofeno"/>
@@ -433,7 +461,9 @@
     <!--**************************************************** -->
     <!-- AGENDES ******************************************* -->
     <!--**************************************************** -->
-
+   
+    <!-- agenda -->
+    <!-- tree -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.agenda_list">
       <field name="name">agenda</field>
       <field name="model">gestiocliniquesdentals.agenda</field>
@@ -444,28 +474,175 @@
       </field>
     </record>
 
+    <!-- form -->
+    <record model="ir.ui.view" id="gestiocliniquesdentals.agenda_form">
+      <field name="name">cita</field>
+      <field name="model">gestiocliniquesdentals.agenda</field>
+      <field name="arch" type="xml">
+      <form>
+        <sheet>
+        <group>
+          <group string="Dades de la cita">
+            <field name="publish_date" string="Data de la cita"/> 
+            <field name="tractament" string="Motiu o tractament principal"/>
+            <field name="descripcio_llarga_cita_agenda" string="Descripció llarga"/>  
+            <field name="pacient_agenda" string="Nom del pacient" context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}"/> 
+            
+          </group>
+
+          <group>
+          </group>
+        </group>
+        </sheet>
+      </form>
+      </field>
+    </record>
+
+
+
+
+
+    <!-- calendari -->
+    <!-- calendar -->
+    <record id="gestiocliniquesdentals.agenda_calendari" model="ir.ui.view">
+      <field name="name">agenda</field>
+      <field name="model">gestiocliniquesdentals.agenda</field>
+      <field name="arch" type="xml">
+          <calendar string="Session Calendar" date_start="publish_date" event_open_popup="False" quick_add="True" form_view_id="gestiocliniquesdentals.emergente_form">
+            <field name="pacient_agenda" context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}" />            
+          </calendar>
+      </field>
+    </record>
+
     
+    cita
     <record model="ir.ui.view" id="gestiocliniquesdentals.cita_list">
       <field name="name">cita</field>
       <field name="model">gestiocliniquesdentals.cita</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="name"/>
+          <field name="publish_date" />
+          <field name="cita_pacient"/>
+          <field name="descripcio_curta_cita" />          
+          <field name="descripcio_llarga_cita"/>
         </tree>
+      </field>
+    </record>
+
+    <!-- form -->
+    <record model="ir.ui.view" id="gestiocliniquesdentals.cita_form">
+      <field name="name">cita</field>
+      <field name="model">gestiocliniquesdentals.cita</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group string="CREAR NOVA CITA">
+              <group>
+                <field name="id_cita" string="ID de la cita" readonly="True"/>
+                <field name="publish_date" string="Fecha de la cita"/>
+                <field name="cita_pacient" string="Paciente"/>
+                <field name="descripcio_curta_cita" string="Decripció"/>          
+                <field name="descripcio_llarga_cita" string="Decripció llarga"/>
+              </group>  
+              <group>
+      
+                <h2 style="color:#71639e; font-style:italic;">Per a crear una nova cita és important itroduir el nom del pacient i la data de la cita</h2>
+              </group>        
+            </group>
+          </sheet>
+        </form>
       </field>
     </record>
 
     <!--**************************************************** -->
     <!-- TRACTAMENTS**************************************** -->
     <!--**************************************************** -->
-
-    <record model="ir.ui.view" id="gestiocliniquesdentals.historia_list">
-      <field name="name">historia</field>
-      <field name="model">res.partner</field>
+    <!-- productes o servici -->
+    <record model="ir.ui.view" id="gestiocliniquesdentals.tractament_list">
+      <field name="name">tractament</field>
+      <field name="model">product.product</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
+          <field name="tax_string" string="Preu"/>
         </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="gestiocliniquesdentals.tractament_form">
+      <field name="name">tractament</field>
+      <field name="model">product.product</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="name" string="Nom del tractament"/>
+                <field name="lst_price" string="Preu"/>
+                <field name="temps_estimat_duracio" string="Temps estimat duració en minuts"/>
+                <field name="compost" string="Tractament compost"/>
+                <field name="categoria_tractament" string="Classificacio del tractament"/>
+              </group>
+              <group>
+                <h3 style="color:#71639e; font-style:italic;">El temps dels tractments s'ha d'introduir en minuts</h3>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- pla de tractament o presupost -->
+
+    <record model="ir.ui.view" id="gestiocliniquesdentals.presupost_list">
+      <field name="name">Presupost</field>
+      <field name="model">sale.order</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="state" invisible="1"/>
+          <field name="name" string="Referència del pressupost"/>
+          <field name="company_id" invisible="1"/>  
+          <field name="partner_id" /> 
+
+        </tree>
+      </field>
+    </record>
+
+      <record model="ir.ui.view" id="gestiocliniquesdentals.presupost_form">
+      <field name="name">Presupost</field>
+      <field name="model">sale.order</field>
+      <field name="priority" eval="17"></field>
+      <field name="arch" type="xml">
+        <form>
+       
+          <sheet>
+            <field name="state" invisible="1"/>
+            <group>               
+                <field name="name" readonly="1" string="Referència del pressupost"/>
+                <field name="company_id" invisible="1"/>  
+                <field name="partner_id" string="Paciente" context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}"/> 
+            </group>            
+            
+            <notebook>
+              <page name="name" string="Tractaments">
+                <field name="order_line">
+                  <tree editable="top">
+                    <field name="company_id" invisible="1"/>
+                    <field name="product_id"/>  
+                    <field name="num_pesa"/>
+                    <field name="product_uom_qty"/>
+                    <field name="price_unit" readonly="1"/>  
+                    <field name="price_subtotal" readonly="1"/>                                       
+                  </tree>  
+                
+                </field>
+                <field name="tax_totals_json" widget="account-tax-totals-field" nolabel="1" colspan="2"/>
+
+                
+              </page>
+            </notebook>
+          </sheet>
+        </form>
       </field>
     </record>
 
@@ -481,6 +658,8 @@
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_pacient_window">
       <field name="name">Pacients</field>
       <field name="res_model">res.partner</field>
+      <field name="context" eval="{'default_country_id': ref('base.es'), 'default_is_pacient':True, 'search_default_tipo_usuari': 1}"></field>      
+      <field name="search_view_id" ref="gestiocliniquesdentals.pacient_search"/>      
       <field name="view_mode">tree,form</field>
       <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.pacient_list')}),
@@ -491,13 +670,12 @@
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_profesional_window">
       <field name="name">Profesional</field>
       <field name="res_model">res.partner</field>
+      <field name="context" eval="{'default_is_sanitari':True, 'search_default_tipo_sanitari': 1}"></field>      
       <field name="view_mode">tree,form</field>
       <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.profesional_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.profesional_form')}),]"/>
     </record>
-
-
 
 
     <!-- doctor -->
@@ -594,88 +772,96 @@
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_anamnesis_window">
       <field name="name">Anamnesis</field>
       <field name="res_model">gestiocliniquesdentals.anamnesis</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">form</field>
       <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.anamnesis_list')}),]" />
+        (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.anamnesis_form')}),]" />
     </record>
 
 
     <!--**************************************************** -->
     <!-- AGENDES ******************************************* -->
     <!--**************************************************** -->
+    <!-- agenda -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_agenda_window">
       <field name="name">Agenda</field>
       <field name="res_model">gestiocliniquesdentals.agenda</field>
-      <field name="view_mode">tree,form</field>
-       <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.agenda_list')}),]" />
+      <field name="view_mode">calendar,form,tree</field>
+       <field name="view_ids" eval="[(5, 0, 0),            
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('gestiocliniquesdentals.agenda_calendari')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.agenda_form')}),]" />
+    
     </record>
-
+    <!-- cita -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_cita_window">
       <field name="name">Cita</field>
       <field name="res_model">gestiocliniquesdentals.cita</field>
       <field name="view_mode">tree,form</field>
-       <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.cita_list')}),]" />
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.cita_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.cita_form')}),]"/>
     </record>
     <!--**************************************************** -->
     <!-- TRACTAMENTS**************************************** -->
     <!--**************************************************** -->
+    <!-- productes -->
+    <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_tractament_window">
+      <field name="name">Cita</field>
+      <field name="res_model">product.product</field>
+      <field name="view_mode">tree,form</field>
+       <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.tractament_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.tractament_form')}),]" />
+    </record>
+
+    <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_presupost_window">
+      <field name="name">Cita</field>
+      <field name="res_model">sale.order</field>
+      <field name="view_mode">tree,form</field>
+       <field name="view_ids" eval="[(5, 0, 0),       
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.presupost_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.presupost_form')}),]" />
+    </record>
 
     <!-- Top menu item -->
 
     <menuitem name="OrganiClinca" id="gestiocliniquesdentals.menu_root"/>
 
     <!-- menu categories -->
-    <menuitem name="Usuaris" id="gestiocliniquesdentals.menu_1" parent="gestiocliniquesdentals.menu_root"/>
+    <menuitem name="Agenda" id="gestiocliniquesdentals.menu_1" parent="gestiocliniquesdentals.menu_root"/>
     <menuitem name="Documents" id="gestiocliniquesdentals.menu_2" parent="gestiocliniquesdentals.menu_root"/>
-    <menuitem name="Agenda" id="gestiocliniquesdentals.menu_3" parent="gestiocliniquesdentals.menu_root"/>
-    
-    
+    <menuitem name="Usuaris" id="gestiocliniquesdentals.menu_3" parent="gestiocliniquesdentals.menu_root"/>
+    <menuitem name="Tractaments" id="gestiocliniquesdentals.menu_4" parent="gestiocliniquesdentals.menu_root" groups="gestiocliniquesdentals.grup_administra"/>
+    <menuitem name="Presupostos" id="gestiocliniquesdentals.menu_5" parent="gestiocliniquesdentals.menu_root" groups="gestiocliniquesdentals.grup_administra"/>
+ 
+
+
     <!-- actions -->
     <!-- menu_1 -->
-    <menuitem name="Pacients" id="gestiocliniquesdentals.menulist_1" parent="gestiocliniquesdentals.menu_1"
+    <menuitem name="Pacients" id="gestiocliniquesdentals.menulist_1" parent="gestiocliniquesdentals.menu_3"
               action="gestiocliniquesdentals.action_pacient_window"/>
 
-    <menuitem name="Profesionals" id="gestiocliniquesdentals.menulist_2" parent="gestiocliniquesdentals.menu_1"
+    <menuitem name="Profesionals" id="gestiocliniquesdentals.menulist_2" parent="gestiocliniquesdentals.menu_3"
               action="gestiocliniquesdentals.action_profesional_window"/>
-    
-    
-    <!-- <menuitem name="Doctors" id="gestiocliniquesdentals.menu_2_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_doctor_window"/>              
-    <menuitem name="Higienístes" id="gestiocliniquesdentals.menu_3_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_higienista_window"/>
-    <menuitem name="Auxiliars" id="gestiocliniquesdentals.menu_4_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_auxiliar_window"/>
-    <menuitem name="Director" id="gestiocliniquesdentals.menu_5_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_director_window"/>
-    <menuitem name="Subdirector" id="gestiocliniquesdentals.menu_6_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_subdirector_window"/>
-    <menuitem name="Administratiu" id="gestiocliniquesdentals.menu_7_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_administratiu_window"/>
-    <menuitem name="Altres" id="gestiocliniquesdentals.menu_8_list" parent="gestiocliniquesdentals.menu_1"
-              action="gestiocliniquesdentals.action_altres_window"/> -->
-    
-    
+              
     <!-- menu_2 -->
     <menuitem name="Historia mèdica" id="gestiocliniquesdentals.menu_0_1_list" parent="gestiocliniquesdentals.menu_2"
               action="gestiocliniquesdentals.action_historia_medica_window"/>
     <menuitem name="Entrada" id="gestiocliniquesdentals.menu_0_2_list" parent="gestiocliniquesdentals.menu_2"
-              action="gestiocliniquesdentals.action_entrada_window"/>
+              action="gestiocliniquesdentals.action_entrada_window"/> 
     <menuitem name="Anamnesis" id="gestiocliniquesdentals.menu_0_3_list" parent="gestiocliniquesdentals.menu_2"
               action="gestiocliniquesdentals.action_anamnesis_window"/>
         
     <!-- menu_3 -->
-    <menuitem name="Agenda" id="gestiocliniquesdentals.menu_1_list" parent="gestiocliniquesdentals.menu_3"
+    <menuitem name="Agenda" id="gestiocliniquesdentals.menu_1_list" parent="gestiocliniquesdentals.menu_1"
               action="gestiocliniquesdentals.action_agenda_window"/>
-    <menuitem name="Cites" id="gestiocliniquesdentals.menu_2_list" parent="gestiocliniquesdentals.menu_3"
-              action="gestiocliniquesdentals.action_cita_window"/>
 
+    <!-- menu_4-->
+    <menuitem name="Productes" id="gestiocliniquesdentals.menu_tractament_list" parent="gestiocliniquesdentals.menu_4"
+              action="gestiocliniquesdentals.action_tractament_window"/>
 
-
-
-    
-
+    <!-- menu_5-->
+    <menuitem name="Pressupostos" id="gestiocliniquesdentals.menu_pressupost_list" parent="gestiocliniquesdentals.menu_5"
+              action="gestiocliniquesdentals.action_presupost_window"/>
 
   </data>
 </odoo>
