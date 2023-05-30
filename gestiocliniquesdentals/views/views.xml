@@ -476,7 +476,7 @@
 
     <!-- form -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.agenda_form">
-      <field name="name">cita</field>
+      <field name="name">agenda</field>
       <field name="model">gestiocliniquesdentals.agenda</field>
       <field name="arch" type="xml">
       <form>
@@ -564,7 +564,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
-          <field name="tax_string" string="Preu"/>
+          <field name="list_price" string="Preu"/>
         </tree>
       </field>
     </record>
@@ -805,7 +805,7 @@
     <!--**************************************************** -->
     <!-- productes -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_tractament_window">
-      <field name="name">Cita</field>
+      <field name="name">Productes</field>
       <field name="res_model">product.product</field>
       <field name="view_mode">tree,form</field>
        <field name="view_ids" eval="[(5, 0, 0),
@@ -814,7 +814,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_presupost_window">
-      <field name="name">Cita</field>
+      <field name="name">Productes</field>
       <field name="res_model">sale.order</field>
       <field name="view_mode">tree,form</field>
        <field name="view_ids" eval="[(5, 0, 0),       
