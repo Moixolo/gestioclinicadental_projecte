@@ -394,7 +394,6 @@
       <field name="model">gestiocliniquesdentals.entrada</field>
       <field name="arch" type="xml">
         <tree>          
-          <field name="id_usuari"/>
           <field name="data_entrada"/>
           <field name="descripcio_curta"/>
           <field name="descripcio_llarga"/>          
