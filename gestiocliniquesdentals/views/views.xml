@@ -783,7 +783,7 @@
     <!--**************************************************** -->
     <!-- agenda -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_agenda_window">
-      <field name="name">Agenda</field>
+      <field name="name">agenda</field>
       <field name="res_model">gestiocliniquesdentals.agenda</field>
       <field name="view_mode">calendar,form,tree</field>
        <field name="view_ids" eval="[(5, 0, 0),            
@@ -812,9 +812,9 @@
             (0, 0, {'view_mode': 'tree', 'view_id': ref('gestiocliniquesdentals.tractament_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('gestiocliniquesdentals.tractament_form')}),]" />
     </record>
-
+    <!-- presupost -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_presupost_window">
-      <field name="name">Productes</field>
+      <field name="name">Presupost</field>
       <field name="res_model">sale.order</field>
       <field name="view_mode">tree,form</field>
        <field name="view_ids" eval="[(5, 0, 0),       
