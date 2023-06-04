@@ -353,7 +353,6 @@
       <field name="model">gestiocliniquesdentals.historia_medica</field>
       <field name="arch" type="xml">
         <tree>
-        <field name="id_historia"/>
         <field name="historia_pacient"/>
         <field name="data_alta"/>
         <field name="descripcio"/>
@@ -516,7 +515,7 @@
     
     cita
     <record model="ir.ui.view" id="gestiocliniquesdentals.cita_list">
-      <field name="name">cita</field>
+      <field name="name">Cita</field>
       <field name="model">gestiocliniquesdentals.cita</field>
       <field name="arch" type="xml">
         <tree>
@@ -530,7 +529,7 @@
 
     <!-- form -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.cita_form">
-      <field name="name">cita</field>
+      <field name="name">Cita</field>
       <field name="model">gestiocliniquesdentals.cita</field>
       <field name="arch" type="xml">
         <form>
@@ -558,7 +557,7 @@
     <!--**************************************************** -->
     <!-- productes o servici -->
     <record model="ir.ui.view" id="gestiocliniquesdentals.tractament_list">
-      <field name="name">tractament</field>
+      <field name="name">Tractament</field>
       <field name="model">product.product</field>
       <field name="arch" type="xml">
         <tree>
@@ -594,7 +593,7 @@
     <!-- pla de tractament o presupost -->
 
     <record model="ir.ui.view" id="gestiocliniquesdentals.presupost_list">
-      <field name="name">Presupost</field>
+      <field name="name">Presupostos</field>
       <field name="model">sale.order</field>
       <field name="arch" type="xml">
         <tree>
@@ -602,26 +601,26 @@
           <field name="name" string="Referència del pressupost"/>
           <field name="company_id" invisible="1"/>  
           <field name="partner_id" /> 
-
+          <field name="date_order"/>
+          <field name="amount_total" />
         </tree>
       </field>
     </record>
 
       <record model="ir.ui.view" id="gestiocliniquesdentals.presupost_form">
-      <field name="name">Presupost</field>
+      <field name="name">Presupostos</field>
       <field name="model">sale.order</field>
       <field name="priority" eval="17"></field>
       <field name="arch" type="xml">
-        <form>
-       
+        <form>       
           <sheet>
             <field name="state" invisible="1"/>
             <group>               
                 <field name="name" readonly="1" string="Referència del pressupost"/>
                 <field name="company_id" invisible="1"/>  
-                <field name="partner_id" string="Paciente" context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}"/> 
-            </group>            
-            
+                <field name="partner_id" string="Paciente" context="{'form_view_ref': 'gestiocliniquesdentals.pacient_form'}"/>
+                
+            </group>           
             <notebook>
               <page name="name" string="Tractaments">
                 <field name="order_line">
@@ -782,7 +781,7 @@
     <!--**************************************************** -->
     <!-- agenda -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_agenda_window">
-      <field name="name">agenda</field>
+      <field name="name">Agenda</field>
       <field name="res_model">gestiocliniquesdentals.agenda</field>
       <field name="view_mode">calendar,form,tree</field>
        <field name="view_ids" eval="[(5, 0, 0),            
@@ -813,7 +812,7 @@
     </record>
     <!-- presupost -->
     <record model="ir.actions.act_window" id="gestiocliniquesdentals.action_presupost_window">
-      <field name="name">Presupost</field>
+      <field name="name">Presupostos</field>
       <field name="res_model">sale.order</field>
       <field name="view_mode">tree,form</field>
        <field name="view_ids" eval="[(5, 0, 0),       
